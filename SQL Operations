@@ -1,0 +1,176 @@
+--SQL SELECT statement
+--The SELECT statement is used to select data from a database.
+--The data returned is stored in a result table, called the result-set.
+
+--The following SQL statement selects all the columns from the "Customers" table:
+SELECT * FROM Customers;
+
+--The following SQL statement selects the "CustomerName" and "City" columns from the "Customers" table:
+SELECT customer_name, city
+FROM Customers;
+
+
+--The SQL SELECT DISTINCT Statement
+--The SELECT DISTINCT statement is used to return only distinct (different) values.
+--Inside a table, a column often contains many duplicate values; and sometimes you only want to list the different (distinct) values.
+
+--SELECT Example Without DISTINCT
+--The following SQL statement selects ALL (including the duplicates) values from the "Country" column in the "Customers" table:
+SELECT country FROM Customers;
+
+--SELECT DISTINCT Examples
+--The following SQL statement selects only the DISTINCT values from the "Country" column in the "Customers" table:
+SELECT DISTINCT country FROM Customers;
+
+--The following SQL statement lists the number of different (distinct) customer countries:
+SELECT COUNT(DISTINCT country) FROM Customers;
+
+
+
+--The SQL WHERE Clause
+--The WHERE clause is used to filter records.
+--The WHERE clause is used to extract only those records that fulfill a specified condition.
+
+--The following SQL statement selects all the customers from the country "Mexico", in the "Customers" table:
+SELECT * FROM Customers
+WHERE country='Mexico';
+
+--SQL requires single quotes around text values (most database systems will also allow double quotes).
+--However, numeric fields should not be enclosed in quotes:
+SELECT * FROM Customers
+WHERE customerID=1;
+
+--The following operators can be used in the WHERE clause:
+--Equal operator
+SELECT * FROM Products WHERE price=18;
+--Greater than
+SELECT * FROM Products WHERE price>30;
+--Less than
+SELECT * FROM Products WHERE price<30;
+--Greater than or Equal
+SELECT * FROM Products WHERE price>=30;
+--Less than or Equal
+SELECT * FROM Products WHERE price<=30;
+--Not Equal
+SELECT * FROM Products WHERE price<>18;
+--BETWEEN 
+SELECT * FROM Products WHERE price BETWEEN 50 AND 60;
+--LIKE
+SELECT * FROM Customers WHERE city LIKE 's%';
+--IN
+SELECT * FROM Customers WHERE city IN ('Paris','London');
+
+--The WHERE clause can be combined with AND, OR, and NOT operators.
+
+--The AND operator displays a record if all the conditions separated by AND are TRUE.
+--The following SQL statement selects all fields from "Customers" where country is "Germany" AND city is "Berlin":
+SELECT * FROM Customers WHERE country='Germany' AND city='Berlin';
+--The OR operator displays a record if any of the conditions separated by OR is TRUE.
+--The following SQL statement selects all fields from "Customers" where country is "Germany" OR "Spain":
+SELECT * FROM Customers WHERE country='Germany' OR country='Spain';
+--The NOT operator displays a record if the condition(s) is NOT TRUE.
+--The following SQL statement selects all fields from "Customers" where country is NOT "Germany":
+SELECT * FROM Customers WHERE NOT country='Germany';
+--You can also combine the AND, OR and NOT operators.
+--The following SQL statement selects all fields from "Customers" where country is "Germany" AND city must be "Berlin" OR "München" (use parenthesis to form complex expressions):
+SELECT * FROM Customers WHERE Country='Germany' AND (City='Berlin' OR City='München');
+
+
+--The SQL ORDER BY Keybooard
+--The ORDER BY keyword is used to sort the result-set in ascending or descending order.
+--The ORDER BY keyword sorts the records in ascending order by default.
+SELECT * FROM Customers ORDER BY country;
+--To sort the records in descending order, use the DESC keyword.
+SELECT * FROM Customers ORDER BY country DESC;
+--ORDER BY Several Columns
+SELECT * FROM Customers ORDER BY country, customer_name;
+--ORDER BY Several Columns
+SELECT * FROM Customers ORDER BY country ASC, customer_name DESC;
+
+
+--The SQL NULL Values- IS NULL and IS NOT NULL
+--A NULL value is different from a zero value or a field that contains spaces. A field with a NULL value is one that has been left blank during record creation!
+--The IS NULL operator is used to test for empty values (NULL values).
+--The following SQL lists all customers with a NULL value in the "Address" field:
+SELECT customer_name, contact_name, address
+FROM Customers
+WHERE address IS NULL;
+--The IS NOT NULL operator is used to test for non-empty values (NOT NULL values).
+--The following SQL lists all customers with a value in the "Address" field:
+SELECT customer_name, contact_name, address
+FROM Customers
+WHERE address IS NOT NULL;
+
+
+--The SQL UPDATE Statement
+--The UPDATE statement is used to modify the existing records in a table.
+--The following SQL statement updates the first customer (CustomerID = 1) with a new contact person and a new city.
+UPDATE Customers
+SET ContactName = 'Alfred Schmidt', City= 'Frankfurt'
+WHERE CustomerID = 1;
+
+
+--The SQL DELETE Statement
+--The DELETE statement is used to delete existing records in a table.
+--The following SQL statement deletes the customer "Alfreds Futterkiste" from the "Customers" table:
+DELETE FROM Customers WHERE CustomerName='Alfreds Futterkiste';
+--The following SQL statement deletes all rows in the "Customers" table, without deleting the table:
+DELETE FROM Customers;
+
+
+--SQL SELECT TOP, LIMIT, ROWNUM Clause
+--The SELECT TOP clause is used to specify the number of records to return.
+--The SELECT TOP clause is useful on large tables with thousands of records. Returning a large number of records can impact performance.
+--Not all database systems support the SELECT TOP clause. MySQL supports the LIMIT clause to select a limited number of records, while Oracle uses ROWNUM.
+SELECT * FROM Customers LIMIT 3;
+
+
+--SQL MIN() and MAX() Functions
+--The MIN() function returns the smallest value of the selected column.
+SELECT MIN(price) AS SmallestPrice FROM Products; 
+--The MAX() function returns the largest value of the selected column.
+SELECT MAX(price) AS LargestPrice FROM Products;
+
+
+--SQL COUNT(), AVG() and SUM() Functions
+--The COUNT() function returns the number of rows that matches a specified criterion.
+SELECT COUNT(ProductID) FROM Products;
+--The AVG() function returns the average value of a numeric column.
+SELECT AVG(price) FROM Products;
+--The SUM() function returns the total sum of a numeric column.
+SELECT SUM(quantity) FROM OrderDetails;
+
+
+--The LIKE operator is used in a WHERE clause to search for a specified pattern in a column.
+--There are two wildcards often used in conjunction with the LIKE operator:
+--% - The percent sign represents zero, one, or multiple characters
+--_ - The underscore represents a single character
+
+--The following SQL statement selects all customers with a CustomerName starting with "a":
+SELECT * FROM Customers WHERE customer_name LIKE 'a%';
+--The following SQL statement selects all customers with a CustomerName ending with "a":
+SELECT * FROM Customers WHERE customer_name LIKE '%a';
+--The following SQL statement selects all customers with a CustomerName that have "or" in any position:
+SELECT * FROM Customers WHERE customer_name LIKE '%or%';
+--The following SQL statement selects all customers with a CustomerName that have "r" in the second position:
+SELECT * FROM Customers WHERE customer_name LIKE '_r%';
+--The following SQL statement selects all customers with a CustomerName that starts with "a" and are at least 3 characters in length:
+SELECT * FROM Customers WHERE customer_name LIKE 'a__%';
+--The following SQL statement selects all customers with a ContactName that starts with "a" and ends with "o":
+SELECT * FROM Customers WHERE contact_name LIKE 'a%o';
+--The following SQL statement selects all customers with a CustomerName that does NOT start with "a":
+SELECT * FROM Customers WHERE customer_name NOT LIKE 'a%';
+
+
+
+--SQL Wildcard Characters
+--A wildcard character is used to substitute one or more characters in a string.
+--Wildcard characters are used with the SQL LIKE operator. The LIKE operator is used in a WHERE clause to search for a specified pattern in a column.
+--Using the % Wildcard
+--The following SQL statement selects all customers with a City starting with "ber":
+SELECT * FROM Customers WHERE city LIKE 'ber%';
+--The following SQL statement selects all customers with a City starting with "b", "s", or "p":
+SELECT * FROM Customers WHERE city LIKE '[bsp]%';
+--The following SQL statements select all customers with a City NOT starting with "b", "s", or "p":
+SELECT * FROM Customers WHERE city NOT LIKE '[bsp]%';
+
