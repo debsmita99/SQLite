@@ -1,0 +1,93 @@
+--SQL ADD Keyword
+--The ADD command is used to add a column in an existing table.
+--The following SQL adds an "Email" column to the "Customers" table:
+ALTER TABLE Customers ADD Email varchar(255);
+
+
+--SQL ADD CONSTRAINT 
+--The ADD CONSTRAINT command is used to create a constraint after a table is already created.
+--The following SQL adds a constraint named "PK_Person" that is a PRIMARY KEY constraint on multiple columns (ID and LastName):
+ALTER TABLE Persons
+ADD CONSTRAINT PK_Person PRIMARY KEY (ID,LastName);
+
+
+--SQL ALTER
+
+--ALTER TABLE
+--The ALTER TABLE command adds, deletes, or modifies columns in a table.
+--The ALTER TABLE command also adds and deletes various constraints in a table.
+--The following SQL adds an "Email" column to the "Customers" table:
+ALTER TABLE Customers
+ADD Email varchar(255);
+--The following SQL deletes the "Email" column from the "Customers" table:
+ALTER TABLE Customers
+DROP COLUMN Email;
+
+--AFTER COLUMN
+--The ALTER COLUMN command is used to change the data type of a column in a table.
+--The following SQL changes the data type of the column named "BirthDate" in the "Employees" table to type year:
+ALTER TABLE Employees
+ALTER COLUMN BirthDate year;
+
+
+--SQL ALL
+--The ALL command returns true if all of the subquery values meet the condition.
+--The following SQL statement returns TRUE and lists the productnames if ALL the records in the OrderDetails table has quantity = 10:
+SELECT product_name
+FROM Products
+WHERE productID = ALL (SELECT productID FROM OrderDetails WHERE quantity = 10);
+
+
+--SQL ANY
+--The ANY command returns true if any of the subquery values meet the condition.
+--The following SQL statement returns TRUE and lists the productnames if it finds ANY records in the OrderDetails table where quantity = 10:
+SELECT product_name
+FROM Products
+WHERE productID = ANY (SELECT productID FROM OrderDetails WHERE quantity = 10);
+
+
+--SQL AS
+--The AS command is used to rename a column or table with an alias. An alias only exists for the duration of the query.
+--The following SQL statement creates two aliases, one for the CustomerID column and one for the CustomerName column:
+SELECT customerID AS ID, customer_name AS Customer
+FROM Customers;
+
+
+--SQL BACKUP DATABASE
+--The BACKUP DATABASE command is used in SQL Server to create a full back up of an existing SQL database.
+--The following SQL statement creates a full back up of the existing database "testDB" to the D disk:
+BACKUP DATABASE testDB
+TO DISK = 'D:\backups\testDB.bak';
+
+
+--SQL CREATE INDEX
+--The CREATE INDEX command is used to create indexes in tables (allows duplicate values).
+--Indexes are used to retrieve data from the database very fast. The users cannot see the indexes, they are just used to speed up searches/queries.
+--The following SQL creates an index named "idx_lastname" on the "LastName" column in the "Persons" table:
+CREATE INDEX idx_lastname
+ON Persons (LastName);
+
+--SQL DROP INDEX
+--The DROP INDEX command is used to delete an index in a table.
+ALTER TABLE Persons
+DROP INDEX idx_lastname;
+
+
+--SQL CREATE VIEW
+--The CREATE VIEW command creates a view. A view is a virtual table based on the result set of an SQL statement.
+--The following SQL creates a view that selects all customers from Brazil:
+CREATE VIEW [Brazil Customers] AS
+SELECT customer_name, contact_name
+FROM Customers
+WHERE country = "Brazil";
+
+--SQL DROP VIEW
+--The DROP VIEW command deletes a view.
+--The following SQL drops the "Brazil Customers" view:
+DROP VIEW [Brazil Customers];
+
+
+--SQL TRUNCATE TABLE
+--The TRUNCATE TABLE command deletes the data inside a table, but not the table itself.
+--The following SQL truncates the table "Categories": 
+TRUNCATE TABLE Categories;
