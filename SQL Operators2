@@ -1,0 +1,221 @@
+--The SQL IN Operator
+--The IN operator allows you to specify multiple values in a WHERE clause.
+--The IN operator is a shorthand for multiple OR conditions.
+--The following SQL statement selects all customers that are located in "Germany", "France" or "UK":
+SELECT * FROM Customers WHERE country IN ('Germany', 'France', 'UK');
+--The following SQL statement selects all customers that are NOT located in "Germany", "France" or "UK":
+SELECT * FROM Customers WHERE Country NOT IN ('Germany', 'France', 'UK');
+--The following SQL statement selects all customers that are from the same countries as the suppliers:
+SELECT * FROM Customers
+WHERE country IN (SELECT country FROM Suppliers);
+
+
+--The SQL BETWEEN Operator
+--The BETWEEN operator selects values within a given range. The values can be numbers, text, or dates.--
+--The BETWEEN operator is inclusive: begin and end values are included.
+--The following SQL statement selects all products with a price BETWEEN 10 and 20:
+SELECT * FROM Products WHERE price BETWEEN 10 AND 20;
+--To display the products outside the range of the previous example, use NOT BETWEEN:
+SELECT * FROM Products WHERE price NOT BETWEEN 10 AND 20;
+--The following SQL statement selects all products with a price BETWEEN 10 and 20. In addition; do not show products with a CategoryID of 1,2, or 3:
+SELECT * FROM Products WHERE price BETWEEN 10 AND 20
+AND categoryID NOT IN (1,2,3);
+--The following SQL statement selects all products with a ProductName BETWEEN Carnarvon Tigers and Mozzarella di Giovanni:
+SELECT * FROM Products
+WHERE product_name BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni'
+ORDER BY product_name;
+--The following SQL statement selects all products with a ProductName NOT BETWEEN Carnarvon Tigers and Mozzarella di Giovanni:
+SELECT * FROM Products
+WHERE product_name NOT BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni'
+ORDER BY product_name;
+--The following SQL statement selects all orders with an OrderDate BETWEEN '01-July-1996' and '31-July-1996':
+SELECT * FROM Orders
+WHERE orderdate BETWEEN '1996-07-01' AND '1996-07-31';
+
+
+
+--SQL Aliases
+--SQL aliases are used to give a table, or a column in a table, a temporary name.
+--Aliases are often used to make column names more readable.
+--An alias only exists for the duration of the query.
+The following SQL statement creates two aliases, one for the CustomerID column and one for the CustomerName column:
+SELECT customerID AS ID, customer_name AS Customer FROM Customers;
+--The following SQL statement selects all the orders from the customer with CustomerID=4 (Around the Horn). We use the "Customers" and "Orders" tables, and give them the table aliases of "c" and "o" respectively (Here we use aliases to make the SQL shorter):
+SELECT o.orderID, o.orderdate, c.customer_name
+FROM Customers AS c, Orders AS o
+WHERE c.customer_name='Around the Horn' AND c.customerID=o.customerID;
+
+
+
+--SQL Joins
+--A JOIN clause is used to combine rows from two or more tables, based on a related column between them.
+--The "CustomerID" column in the "Orders" table refers to the "CustomerID" in the "Customers" table. The relationship between the two tables above is the "CustomerID" column.
+--Then, we can create the following SQL statement (that contains an INNER JOIN), that selects records that have matching values in both tables:
+--The INNER JOIN 
+--The INNER JOIN keyword selects records that have matching values in both tables.
+SELECT Orders.orderID, Customers.customer_name, Orders.orderdate FROM Orders
+INNER JOIN Customers ON Orders.customerID=Customers.customerID;
+
+--The LEFT JOIN 
+--The LEFT JOIN keyword returns all records from the left table (table1), and the matched records from the right table (table2). The result is NULL from the right side, if there is no match.
+--The following SQL statement will select all customers, and any orders they might have:
+SELECT Customers.customer_name, Orders.orderID
+FROM Customers
+LEFT JOIN Orders ON Customers.customerID = Orders.customerID
+ORDER BY Customers.customer_name;
+
+--The RIGHT JOIN
+--The RIGHT JOIN keyword returns all records from the right table (table2), and the matched records from the left table (table1). The result is NULL from the left side, when there is no match.
+--The following SQL statement will return all employees, and any orders they might have placed:
+SELECT Orders.orderID, Employees.last_name, Employees.first_name
+FROM Orders
+RIGHT JOIN Employees ON Orders.employeeID = Employees.employeeID
+ORDER BY Orders.orderID;
+
+--The FULL OUTER JOIN
+--The FULL OUTER JOIN keyword returns all records when there is a match in left (table1) or right (table2) table records.
+--FULL OUTER JOIN can potentially return very large result-sets!
+--FULL OUTER JOIN and FULL JOIN are the same.
+--The following SQL statement selects all customers, and all orders:
+SELECT Customers.customer_name, Orders.orderID
+FROM Customers
+FULL OUTER JOIN Orders ON Customers.customerID=Orders.customerID
+ORDER BY Customers.customer_name;
+
+--The SQL Self Join
+--A self JOIN is a regular join, but the table is joined with itself.
+--The following SQL statement matches customers that are from the same city:
+SELECT A.customer_name AS CustomerName1, B.customer_name AS CustomerName2, A.city
+FROM Customers A, Customers B
+WHERE A.customerID <> B.customerID
+AND A.city = B.city
+ORDER BY A.city;
+
+--SQL UNION Operator
+--The UNION operator is used to combine the result-set of two or more SELECT statements.
+--Each SELECT statement within UNION must have the same number of columns
+--The columns must also have similar data types
+--The columns in each SELECT statement must also be in the same order
+--The following SQL statement returns the cities (only distinct values) from both the "Customers" and the "Suppliers" table:
+SELECT City FROM Customers
+UNION
+SELECT City FROM Suppliers
+ORDER BY city;
+
+--SQL UNION ALL Operator
+--If some customers or suppliers have the same city, each city will only be listed once, because UNION selects only distinct values. Use UNION ALL to also select duplicate values!
+--The following SQL statement returns the cities (duplicate values also) from both the "Customers" and the "Suppliers" table:
+SELECT City FROM Customers
+UNION ALL
+SELECT City FROM Suppliers
+ORDER BY city;
+
+
+--SQL GROUP BY Statement
+--The GROUP BY statement groups rows that have the same values into summary rows, like "find the number of customers in each country".
+--The GROUP BY statement is often used with aggregate functions (COUNT, MAX, MIN, SUM, AVG) to group the result-set by one or more columns.
+--The following SQL statement lists the number of customers in each country:
+SELECT COUNT(CustomerID), Country FROM Customers
+GROUP BY country;
+--The following SQL statement lists the number of customers in each country, sorted high to low:
+SELECT COUNT(customerID), country
+FROM Customers
+GROUP BY country
+ORDER BY COUNT(customerID) DESC;
+
+
+--SQL HAVING Clause
+--The HAVING clause was added to SQL because the WHERE keyword could not be used with aggregate functions.
+--The following SQL statement lists the number of customers in each country. Only include countries with more than 5 customers:
+SELECT COUNT(customerID), ountry
+FROM Customers
+GROUP BY country
+HAVING COUNT(customerID) > 5;
+--The following SQL statement lists if the employees "Davolio" or "Fuller" have registered more than 25 orders:
+SELECT Employees.last_name, COUNT(Orders.orderID) AS NumberOfOrders
+FROM Orders
+INNER JOIN Employees ON Orders.employeeID = Employees.employeeID
+WHERE last_name = 'Davolio' OR last_name = 'Fuller'
+GROUP BY last_name
+HAVING COUNT(Orders.orderID) > 25;
+
+
+--SQL EXISTS Operator
+--The EXISTS operator is used to test for the existence of any record in a subquery.
+--The EXISTS operator returns true if the subquery returns one or more records.
+--The following SQL statement returns TRUE and lists the suppliers with a product price less than 20:
+SELECT supplier_name
+FROM Suppliers
+WHERE EXISTS (SELECT product_name FROM Products WHERE Products.supplierID = Suppliers.supplierID AND price < 20);
+
+
+--SQL ANY and ALL Operators
+--The ANY and ALL operators are used with a WHERE or HAVING clause.
+--The ANY operator returns true if any of the subquery values meet the condition.
+--The ALL operator returns true if all of the subquery values meet the condition.
+
+--SQL ANY
+--The ANY operator returns TRUE if any of the subquery values meet the condition.
+--The following SQL statement returns TRUE and lists the product names if it finds ANY records in the OrderDetails table that quantity = 10:
+SELECT product_name
+FROM Products
+WHERE productID = ANY (SELECT productID FROM OrderDetails WHERE quantity = 10);
+
+--SQL ALL
+--The ALL operator returns TRUE if all of the subquery values meet the condition.
+--The following SQL statement returns TRUE and lists the product names if ALL the records in the OrderDetails table has quantity = 10 (so, this example will return FALSE, because not ALL records in the OrderDetails table has quantity = 10):
+SELECT product_name
+FROM Products
+WHERE productID = ALL (SELECT productID FROM OrderDetails WHERE quantity = 10);
+
+
+
+--SQL SELECT INTO Statement
+--The SELECT INTO statement copies data from one table into a new table.
+--The following SQL statement creates a backup copy of Customers:
+SELECT * INTO CustomersBackup2020 FROM Customers;
+
+
+
+--SQL INSERT INTO SELECT Statement
+--The INSERT INTO SELECT statement copies data from one table and inserts it into another table.
+--INSERT INTO SELECT requires that data types in source and target tables match
+--The existing records in the target table are unaffected
+--The following SQL statement copies "Suppliers" into "Customers" (the columns that are not filled with data, will contain NULL):
+INSERT INTO Customers (customer_name, city, country)
+SELECT supplier_name, city, country FROM Suppliers;
+
+
+--SQL CASE Statement
+--The CASE statement goes through conditions and returns a value when the first condition is met (like an IF-THEN-ELSE statement). So, once a condition is true, it will stop reading and return the result. If no conditions are true, it returns the value in the ELSE clause.
+--If there is no ELSE part and no conditions are true, it returns NULL.
+--The following SQL goes through conditions and returns a value when the first condition is met:
+SELECT orderID, quantity,
+CASE
+    WHEN quantity > 30 THEN 'The quantity is greater than 30'
+    WHEN quantity = 30 THEN 'The quantity is 30'
+    ELSE 'The quantity is under 30'
+END AS QuantityText
+FROM OrderDetails;
+
+
+--SQL IFNULL() and COALESCE()
+--The MySQL IFNULL() function lets you return an alternative value if an expression is NULL:
+SELECT ProductName, UnitPrice * (UnitsInStock + IFNULL(UnitsOnOrder, 0))
+FROM Products;
+--or we can use the COALESCE() function, like this:
+SELECT ProductName, UnitPrice * (UnitsInStock + COALESCE(UnitsOnOrder, 0))
+FROM Products;
+
+
+--SQL Stored Procedures
+--A stored procedure is a prepared SQL code that you can save, so the code can be reused over and over again.
+--So if you have an SQL query that you write over and over again, save it as a stored procedure, and then just call it to execute it.
+--You can also pass parameters to a stored procedure, so that the stored procedure can act based on the parameter value(s) that is passed.
+--The following SQL statement creates a stored procedure named "SelectAllCustomers" that selects all records from the "Customers" table:
+CREATE PROCEDURE SelectAllCustomers
+AS
+SELECT * FROM Customers
+GO;
+--Execute the stored procedure above as follows:
+EXEC SelectAllCustomers;
